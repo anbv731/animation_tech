@@ -100,19 +100,23 @@ class _ImplicitExampleState extends State<ImplicitExample> {
         const SizedBox(
           height: 20,
         ),
-        GestureDetector(
-          onTap: () {
-            _isMoved = !_isMoved;
-          },
-          child: Stack(
-            children: <Widget>[
+        SizedBox(
+          height: 300,
+          width: 300,
+          child: GestureDetector(
+            onTap: () {
+              setState(() {
+                _isMoved = !_isMoved;
+              });
+            },
+            child: Stack(children: [
               AnimatedPositioned(
-                duration: Duration(seconds: 1),
+                duration: const Duration(seconds: 1),
                 left: _isMoved ? 200.0 : 50.0,
                 top: _isMoved ? 200.0 : 50.0,
-                child: FlutterLogo(size: 100),
+                child: const FlutterLogo(size: 100),
               ),
-            ],
+            ]),
           ),
         ),
         SizedBox(
