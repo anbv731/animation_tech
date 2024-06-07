@@ -11,7 +11,7 @@ class AnimatedContainerExampleApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(title: const Text('Example')),
+        appBar: AppBar(title: const Text('Animation Example')),
         body: ListView(children: const [
           ImplicitExample(),
           SizedBox(
@@ -21,7 +21,7 @@ class AnimatedContainerExampleApp extends StatelessWidget {
           SizedBox(
             height: 100,
           ),
-          AnimatedFooExample(),
+          ExplicitAnimationExample(),
           SizedBox(
             height: 100,
           ),
@@ -29,6 +29,7 @@ class AnimatedContainerExampleApp extends StatelessWidget {
           SizedBox(
             height: 40,
           ),
+          FirstRoute(),
         ]),
       ),
     );
@@ -55,6 +56,10 @@ class _ImplicitExampleState extends State<ImplicitExample> {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
+        const Text(
+          'Implicit example',
+          style: TextStyle(fontSize: 24),
+        ),
         GestureDetector(
           onTap: () {
             setState(() {
@@ -187,11 +192,20 @@ class _AnimatedWidgetExampleState extends State<AnimatedWidgetExample> with Sing
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-        onTap: () {
-          _controller.isAnimating ? _controller.stop() : _controller.repeat();
-        },
-        child: SpinningContainer(controller: _controller));
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        const Text(
+          'Animated widget example',
+          style: TextStyle(fontSize: 24),
+        ),
+        GestureDetector(
+            onTap: () {
+              _controller.isAnimating ? _controller.stop() : _controller.repeat();
+            },
+            child: SpinningContainer(controller: _controller)),
+      ],
+    );
   }
 }
 
@@ -215,14 +229,14 @@ class SpinningContainer extends AnimatedWidget {
   }
 }
 
-class AnimatedFooExample extends StatefulWidget {
-  const AnimatedFooExample({super.key});
+class ExplicitAnimationExample extends StatefulWidget {
+  const ExplicitAnimationExample({super.key});
 
   @override
-  State<AnimatedFooExample> createState() => _AnimatedFooExampleState();
+  State<ExplicitAnimationExample> createState() => _ExplicitAnimationExampleState();
 }
 
-class _AnimatedFooExampleState extends State<AnimatedFooExample> with TickerProviderStateMixin {
+class _ExplicitAnimationExampleState extends State<ExplicitAnimationExample> with TickerProviderStateMixin {
   late final AnimationController _controllerFirst = AnimationController(
     duration: const Duration(seconds: 1),
     vsync: this,
@@ -264,25 +278,37 @@ class _AnimatedFooExampleState extends State<AnimatedFooExample> with TickerProv
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _controllerFirst,
-      child: Center(
-        child: IconButton(
-          onPressed: () {
-            _controllerFirst.isCompleted ? _controllerFirst.reverse() : _controllerFirst.forward();
-          },
-          icon: const Icon(Icons.add),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        const Text(
+          'Explicit animation example',
+          style: TextStyle(fontSize: 24),
         ),
-      ),
-      builder: (BuildContext context, Widget? child) {
-        return CustomPaint(
-          painter: CirclePainter(
-            radius: radiusAnimation.value,
-            color: colorAnimation.value,
+        SizedBox(
+          height: 300,
+          child: AnimatedBuilder(
+            animation: _controllerFirst,
+            child: Center(
+              child: IconButton(
+                onPressed: () {
+                  _controllerFirst.isCompleted ? _controllerFirst.reverse() : _controllerFirst.forward();
+                },
+                icon: const Icon(Icons.add),
+              ),
+            ),
+            builder: (BuildContext context, Widget? child) {
+              return CustomPaint(
+                painter: CirclePainter(
+                  radius: radiusAnimation.value,
+                  color: colorAnimation.value,
+                ),
+                child: child,
+              );
+            },
           ),
-          child: child,
-        );
-      },
+        ),
+      ],
     );
   }
 }
@@ -402,22 +428,30 @@ class _TweenSequenceExampleState extends State<TweenSequenceExample> with Ticker
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: ColoredBox(
-        color: Colors.amber,
-        child: SizedBox(
-          height: 150,
-          width: 150,
-          child: AnimatedBuilder(
-            animation: _controller,
-            builder: (BuildContext context, Widget? child) {
-              return CustomPaint(
-                painter: BallPainter(xProgress: xAnimation.value, yProgress: yAnimation.value),
-              );
-            },
+    return Column(
+      children: [
+        const Text(
+          'TweenSequence example',
+          style: TextStyle(fontSize: 24),
+        ),
+        Center(
+          child: ColoredBox(
+            color: Colors.amber,
+            child: SizedBox(
+              height: 150,
+              width: 150,
+              child: AnimatedBuilder(
+                animation: _controller,
+                builder: (BuildContext context, Widget? child) {
+                  return CustomPaint(
+                    painter: BallPainter(xProgress: xAnimation.value, yProgress: yAnimation.value),
+                  );
+                },
+              ),
+            ),
           ),
         ),
-      ),
+      ],
     );
   }
 }
@@ -441,5 +475,57 @@ class BallPainter extends CustomPainter {
   @override
   bool shouldRepaint(BallPainter oldDelegate) {
     return true;
+  }
+}
+
+class FirstRoute extends StatelessWidget {
+  const FirstRoute({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(20.0),
+      child: Column(
+        children: [
+          const Text(
+            'Hero animation example',
+            style: TextStyle(fontSize: 24),
+          ),
+          Center(
+            child: GestureDetector(
+              child: const Hero(
+                tag: 'hero-tag',
+                child: FlutterLogo(size: 100),
+              ),
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (_) => const SecondRoute()));
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class SecondRoute extends StatelessWidget {
+  const SecondRoute({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Second Route')),
+      body: Center(
+        child: GestureDetector(
+          child: const Hero(
+            tag: 'hero-tag',
+            child: FlutterLogo(size: 200),
+          ),
+          onTap: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
+    );
   }
 }
