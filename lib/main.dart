@@ -414,8 +414,8 @@ class _TweenSequenceExampleState extends State<TweenSequenceExample> with Ticker
         tween: Tween<double>(
           begin: 50,
           end: -50,
-        ),
-        weight: 1),
+        ).chain(CurveTween(curve: Curves.bounceOut)),
+        weight: 3),
   ]).animate(
     _controller,
   );
